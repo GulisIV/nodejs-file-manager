@@ -1,0 +1,20 @@
+{
+  "name": "nodejs-file-manager",
+  "version": "1.0.0",
+  "description": "Task implementation for https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/file-manager/assignment.md",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GulisIV/nodejs-file-manager.git"
+  },
+  "keywords": [],
+  "author": "GulisIV",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GulisIV/nodejs-file-manager"
+  },
+  "homepage": "https://github.com/GulisIV/nodejs-file-manager#readme"
+}
