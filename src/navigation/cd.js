@@ -1,4 +1,4 @@
-import { chdir } from "process";
+import { chdir, cwd } from "process";
 import { join, isAbsolute } from "path";
 
 export const cd = async (currentDir, args) => {

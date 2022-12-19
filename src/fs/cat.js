@@ -1,6 +1,6 @@
 import { join, isAbsolute } from "path";
 import { open } from "fs/promises";
-import { getRequestedFileType } from "../utils.js";
+import { getRequestedFileType, checkFileExistance } from "../utils.js";
 import { operationFailedMessage } from "../constants.js";
 
 export const cat = async (currentDir, args) => {
@@ -9,8 +9,10 @@ export const cat = async (currentDir, args) => {
     ? requestedPath
     : join(currentDir, requestedPath);
 
-  if ((await getRequestedFileType(path)) === "directory") {
-    console.log("here");
+  if (
+    (await getRequestedFileType(path)) === "directory" ||
+    !checkFileExistance(path)
+  ) {
     console.log(operationFailedMessage);
     return;
   }

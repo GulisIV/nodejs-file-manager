@@ -1,4 +1,5 @@
 import { lstat, access } from "fs/promises";
+import { chdir, cwd } from "process";
 import { join } from "path";
 import { up, cd, ls } from "./navigation/index.js";
 import { cat, add, rn, cp, mv, rm } from "./fs/index.js";
@@ -6,6 +7,19 @@ import { hash } from "./hash/hash.js";
 import { os } from "./os/os.js";
 import { compress, decompress } from "./zip/index.js";
 import { commandsList, invalidInputMessage } from "./constants.js";
+
+export const getCurrentDir = () => {
+  return cwd();
+};
+
+export const setCurrentDir = (currentDir) => {
+  chdir(currentDir);
+  return getCurrentDir();
+};
+
+export const getCurrentDirMessage = (currentDir) => {
+  return `You are currently in ${currentDir}`;
+};
 
 export const getRequestedFileType = async (path) => {
   const fileStat = await lstat(path);

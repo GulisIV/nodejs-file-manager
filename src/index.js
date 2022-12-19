@@ -1,19 +1,24 @@
 import { homedir } from "os";
 import readline from "readline";
 import { stdin, stdout } from "process";
-import { getUsername, executeCommand } from "./utils.js";
+import {
+  getUsername,
+  executeCommand,
+  getCurrentDir,
+  setCurrentDir,
+  getCurrentDirMessage,
+} from "./utils.js";
 import { commandsList, operationFailedMessage } from "./constants.js";
 
 const onStartArgsArray = process.argv.slice(2);
 const userName = getUsername(onStartArgsArray);
-let currentDir = homedir();
+let currentDir = setCurrentDir(homedir());
 
 const welcomeMessage = `Welcome to the File Manager, ${userName}!`;
 const exitMessage = `Thank you for using File Manager, ${userName}, goodbye!`;
-const currentDirMessage = `You are currently in ${currentDir}`;
 
 console.log(welcomeMessage);
-console.log(currentDirMessage);
+console.log(getCurrentDirMessage(currentDir));
 
 const rl = readline.createInterface({
   input: stdin,
@@ -34,10 +39,11 @@ rl.on("line", async (input) => {
   command === commandsList.exit && rl.close();
   try {
     await executeCommand(commandData);
+    currentDir = setCurrentDir(getCurrentDir());
   } catch (e) {
-    console.log(operationFailedMessage);
+    console.error(`${operationFailedMessage} \n ${e}`);
   }
-  console.log(currentDirMessage);
+  console.log(getCurrentDirMessage(currentDir));
 });
 
 rl.on("SIGINT", () => {

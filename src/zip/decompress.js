@@ -1,4 +1,5 @@
 import { createBrotliDecompress } from "zlib";
+import { join } from "path";
 import { pipeline } from "stream/promises";
 import { createReadStream, createWriteStream } from "fs";
 import { checkFileExistance } from "../utils.js";
