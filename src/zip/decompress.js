@@ -1,12 +1,15 @@
-import { createGunzip } from "zlib";
+import { createBrotliDecompress } from "zlib";
 import { pipeline } from "stream/promises";
 import { createReadStream, createWriteStream } from "fs";
-import { filePath, archivePath } from "./utils.js";
+import { checkFileExistance } from "../utils.js";
 
-const decompress = async () => {
-  const readStream = createReadStream(archivePath);
-  const writeStream = createWriteStream(filePath);
-  await pipeline(readStream, createGunzip(), writeStream);
+export const decompress = async (currentDir, args) => {
+  const requestedFilePath = join(currentDir, args[0]);
+  const newFilePath = join(currentDir, args[1]);
+
+  if (await checkFileExistance(requestedFilePath)) {
+    const readStream = createReadStream(requestedFilePath);
+    const writeStream = createWriteStream(newFilePath);
+    await pipeline(readStream, createBrotliDecompress(), writeStream);
+  }
 };
-
-await decompress();

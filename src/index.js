@@ -2,7 +2,7 @@ import { homedir } from "os";
 import readline from "readline";
 import { stdin, stdout } from "process";
 import { getUsername, executeCommand } from "./utils.js";
-import { commandsList } from "./constants.js";
+import { commandsList, operationFailedMessage } from "./constants.js";
 
 const onStartArgsArray = process.argv.slice(2);
 const userName = getUsername(onStartArgsArray);
@@ -32,7 +32,11 @@ rl.on("line", async (input) => {
   };
 
   command === commandsList.exit && rl.close();
-  await executeCommand(commandData);
+  try {
+    await executeCommand(commandData);
+  } catch (e) {
+    console.log(operationFailedMessage);
+  }
   console.log(currentDirMessage);
 });
 

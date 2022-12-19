@@ -1,9 +1,42 @@
+import { lstat, access } from "fs/promises";
+import { join } from "path";
+import { up, cd, ls } from "./navigation/index.js";
+import { cat, add, rn, cp, mv, rm } from "./fs/index.js";
+import { hash } from "./hash/hash.js";
+import { os } from "./os/os.js";
+import { compress, decompress } from "./zip/index.js";
 import { commandsList, invalidInputMessage } from "./constants.js";
+
+export const getRequestedFileType = async (path) => {
+  const fileStat = await lstat(path);
+  return fileStat.isDirectory() ? "directory" : "file";
+};
 
 export const getUsername = (lineArgs) => {
   const usernameKey = lineArgs[0];
   const usernameStartIndex = usernameKey.indexOf("=") + 1;
   return usernameKey.slice(usernameStartIndex) || "Username";
+};
+
+export const formatFilesOutput = async (currentDir, files) => {
+  const dirFiles = [];
+  const filesWithTypes = await Promise.allSettled(
+    files.map(async (file) => {
+      const type = await getRequestedFileType(join(currentDir, file));
+      return {
+        Name: file,
+        Type: type,
+      };
+    })
+  );
+
+  for (const file of filesWithTypes) {
+    if (file.status === "fulfilled") {
+      dirFiles.push(file.value);
+    }
+  }
+  const result = dirFiles.sort((a, b) => a.Type.localeCompare(b.Type));
+  return result;
 };
 
 export const executeCommand = async (input) => {
@@ -13,43 +46,52 @@ export const executeCommand = async (input) => {
       await up();
       break;
     case commandsList.cd:
-      await cd();
+      await cd(currentDir, args);
       break;
     case commandsList.ls:
-      await list();
+      await ls(currentDir);
       break;
     case commandsList.cat:
-      await cat();
+      await cat(currentDir, args);
       break;
     case commandsList.add:
-      await add();
+      await add(currentDir, args);
       break;
     case commandsList.rn:
-      await rn();
+      await rn(currentDir, args);
       break;
     case commandsList.cp:
-      await cp();
+      await cp(currentDir, args);
       break;
     case commandsList.mv:
-      await mv();
+      await mv(currentDir, args);
       break;
     case commandsList.rm:
-      await rm();
+      await rm(currentDir, args);
       break;
     case commandsList.os:
-      await os();
+      await os(args);
       break;
     case commandsList.hash:
-      await hash();
+      await hash(currentDir, args);
       break;
     case commandsList.compress:
-      await compress();
+      await compress(currentDir, args);
       break;
     case commandsList.decompress:
-      await decompress();
+      await decompress(currentDir, args);
       break;
     default:
       console.log(invalidInputMessage);
       break;
+  }
+};
+
+export const checkFileExistance = async (file) => {
+  try {
+    await access(file);
+    return true;
+  } catch (e) {
+    return false;
   }
 };
